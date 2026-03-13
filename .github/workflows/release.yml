@@ -25,6 +25,9 @@ jobs:
           release_branches: main
           tag_prefix: v
 
+      - name: Fetch new tag
+        run: git fetch --tags --force
+
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
