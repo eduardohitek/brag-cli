@@ -7,9 +7,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// Version is set at build time via -ldflags.
+var Version = "dev"
+
 var rootCmd = &cobra.Command{
-	Use:   "brag",
-	Short: "Track your engineering accomplishments for performance reviews",
+	Use:     "brag",
+	Version: Version,
+	Short:   "Track your engineering accomplishments for performance reviews",
 	Long: `brag helps software engineers capture accomplishments, sync GitHub PRs/issues
 and Jira tickets, enrich entries with AI, and generate performance review reports.`,
 }
