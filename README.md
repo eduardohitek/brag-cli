@@ -1,0 +1,175 @@
+# brag
+
+Uma ferramenta de linha de comando para engenheiros de software registrarem conquistas, sincronizarem PRs/issues do GitHub e tickets do Jira, enriquecerem entradas com IA (formato STAR) e gerarem relatórios estruturados para avaliações de desempenho.
+
+## Funcionalidades
+
+- **Entradas manuais** via `brag add` com enriquecimento por IA (formato STAR, tags, pontuação de impacto)
+- **Sincronização com GitHub** — PRs mergeados e issues fechadas por você
+- **Sincronização com Jira** — tickets movidos para Done
+- **Rastreamento de OKRs** — associe entradas a OKRs; a IA infere com alta confiança
+- **StarTrail (trilha de carreira)** — contexto opcional de trilha de carreira para que o enriquecimento por IA reflita as competências do seu cargo
+- **Relatórios de desempenho** — narrativa sintetizada por IA, agrupada por OKR, exportável em Markdown e PDF
+- **Armazenamento em repositório GitHub privado** — entradas em JSON, sem banco de dados
+
+## Instalação
+
+```sh
+go install github.com/eduardohitek/brag@latest
+```
+
+Ou compilar a partir do código-fonte:
+
+```sh
+git clone https://github.com/eduardohitek/brag
+cd brag
+go build -o brag .
+```
+
+## Configuração inicial
+
+```sh
+brag init
+```
+
+O assistente interativo coleta:
+- Token do GitHub + repositório para armazenamento (`owner/repo`)
+- Token do GitHub + usuário para sincronização de PRs/issues
+- URL base do Jira, e-mail e token de API (opcional)
+- Chave de API da Anthropic
+- Janela padrão de sincronização (dias)
+- OKRs iniciais (opcional)
+
+A configuração é salva em `~/.brag/config.yaml`.
+
+### Arquivo de configuração (`~/.brag/config.yaml`)
+
+```yaml
+anthropic_api_key: "sk-ant-..."
+storage:
+  github_token: "ghp_..."
+  repo: "usuario/brag-data"
+github_sync:
+  token: "ghp_..."
+  username: "seuusuariogithub"
+jira:
+  base_url: "https://suaempresa.atlassian.net"
+  email: "voce@empresa.com"
+  api_token: "..."
+sync:
+  default_days: 30
+okrs:
+  - id: "OKR-2025-Q1-01"
+    title: "Entregar o novo fluxo de onboarding até o fim do Q1"
+    active: true
+star_trail:
+  file_path: "/home/voce/empresa/trilha-carreira.md"
+  current_role: "Engenheiro Sênior"
+  target_role: "Staff Engineer"   # opcional
+```
+
+## Uso
+
+### Adicionar uma entrada manual
+
+```sh
+brag add "Corrigi um bug crítico de autenticação que afetava 20% dos usuários"
+brag add "Liderança na migração para Kubernetes" --project minha-plataforma --okr OKR-2025-Q1-01
+```
+
+### Sincronizar GitHub + Jira
+
+```sh
+brag sync           # usa default_days do config
+brag sync --days 14
+```
+
+### Listar entradas
+
+```sh
+brag list
+brag list --period Q1-2025
+brag list --tag reliability
+brag list --source github
+brag list --okr OKR-2025-Q1-01
+brag list --no-okr
+brag list --from 2025-01-01 --to 2025-03-31
+```
+
+### Gerar relatório
+
+```sh
+brag report
+brag report --period Q1-2025
+brag report --from 2025-01-01 --to 2025-03-31
+```
+
+O relatório é salvo em `reports/AAAA-MM-DD-report.md` no repositório GitHub de armazenamento.
+
+### Exportar
+
+```sh
+brag export                  # PDF (padrão), relatório mais recente
+brag export --format md      # cópia em Markdown
+brag export --format pdf --report 2025-03-10-report.md
+```
+
+> A exportação para PDF requer o Google Chrome ou Chromium instalado.
+
+### Gerenciar OKRs
+
+```sh
+brag okr list
+brag okr add --id "OKR-2025-Q2-01" --title "Reduzir latência p95 para abaixo de 200ms"
+brag okr deactivate OKR-2025-Q1-01
+```
+
+### StarTrail (trilha de carreira)
+
+Aponte o `brag` para o documento de trilha de carreira da sua empresa para que o enriquecimento por IA e os relatórios reflitam as competências esperadas do seu cargo.
+
+```sh
+# Configurar (--target-role é opcional)
+brag startrail set --file ~/empresa/trilha-carreira.md \
+                   --current-role "Engenheiro Sênior" \
+                   --target-role "Staff Engineer"
+
+# Exibir a configuração ativa e uma prévia do documento
+brag startrail show
+
+# Remover a configuração (volta ao comportamento padrão de enriquecimento)
+brag startrail clear
+```
+
+Quando configurado, cada enriquecimento do `brag add` e `brag sync` levará em conta como a atividade demonstra ou avança as competências esperadas do seu cargo atual (e do cargo alvo, se definido). A narrativa do `brag report` também mencionará o progresso nessas competências.
+
+A configuração é armazenada em `~/.brag/config.yaml`:
+
+```yaml
+star_trail:
+  file_path: "/home/voce/empresa/trilha-carreira.md"
+  current_role: "Engenheiro Sênior"
+  target_role: "Staff Engineer"   # opcional
+```
+
+Esta funcionalidade é completamente opcional — sem configuração, o comportamento é idêntico ao anterior.
+
+## Armazenamento
+
+As entradas são armazenadas como JSON em um repositório GitHub privado dentro de `entries/`:
+
+```
+entries/2025-03-10-143022-manual.json
+entries/2025-03-10-153022-github.json
+reports/2025-03-10-report.md
+```
+
+Um cache local também é mantido em `~/.brag/cache/`.
+
+## Enriquecimento por IA
+
+Utiliza `claude-sonnet-4-20250514` (Anthropic) para:
+- Converter notas brutas em declarações de conquista no formato STAR
+- Atribuir tags: `confiabilidade`, `velocidade`, `liderança`, `mentoria`, `entrega`, `qualidade`, `impacto`
+- Pontuar o impacto de 1 a 5
+- Inferir associação com OKRs (apenas com alta confiança, nunca forçado)
