@@ -11,7 +11,7 @@
       "Bash(go build:*)",
       "Bash(go vet:*)",
       "Bash(gh auth:*)",
-      "Bash(git init:* and never add Co-Authored-By line.)"
+      "Bash(gh repo:*)"
     ]
   }
 }
