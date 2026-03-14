@@ -8,6 +8,11 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+const (
+	ProviderAnthropic = "anthropic"
+	ProviderOpenAI    = "openai"
+)
+
 type StarTrailConfig struct {
 	FilePath    string `yaml:"file_path,omitempty"`
 	CurrentRole string `yaml:"current_role,omitempty"`
@@ -57,12 +62,30 @@ type SyncConfig struct {
 
 type Config struct {
 	AnthropicAPIKey string           `yaml:"anthropic_api_key"`
+	OpenAIAPIKey    string           `yaml:"openai_api_key,omitempty"`
+	AIProvider      string           `yaml:"ai_provider,omitempty"`
+	AIModel         string           `yaml:"ai_model,omitempty"`
 	Storage         StorageConfig    `yaml:"storage"`
 	GithubSync      GithubSyncConfig `yaml:"github_sync"`
 	Jira            JiraConfig       `yaml:"jira"`
 	Sync            SyncConfig       `yaml:"sync"`
 	OKRs            []OKR            `yaml:"okrs"`
 	StarTrail       StarTrailConfig  `yaml:"star_trail,omitempty"`
+}
+
+func (c *Config) ResolveAIProvider(providerFlag, modelFlag string) (provider, model string) {
+	provider = providerFlag
+	if provider == "" {
+		provider = c.AIProvider
+	}
+	if provider == "" {
+		provider = ProviderAnthropic
+	}
+	model = modelFlag
+	if model == "" {
+		model = c.AIModel
+	}
+	return provider, model
 }
 
 func ConfigDir() string {

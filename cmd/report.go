@@ -15,10 +15,12 @@ import (
 )
 
 var (
-	reportFrom   string
-	reportTo     string
-	reportPeriod string
-	reportOKR    string
+	reportFrom     string
+	reportTo       string
+	reportPeriod   string
+	reportOKR      string
+	reportProvider string
+	reportModel    string
 )
 
 var reportCmd = &cobra.Command{
@@ -32,6 +34,8 @@ func init() {
 	reportCmd.Flags().StringVar(&reportTo, "to", "", "End date (YYYY-MM-DD)")
 	reportCmd.Flags().StringVar(&reportPeriod, "period", "", "Period shorthand (e.g. Q1-2025)")
 	reportCmd.Flags().StringVar(&reportOKR, "okr", "", "Filter by OKR ID")
+	reportCmd.Flags().StringVar(&reportProvider, "provider", "", "AI provider (anthropic, openai)")
+	reportCmd.Flags().StringVar(&reportModel, "model", "", "AI model override")
 }
 
 func runReport(cmd *cobra.Command, args []string) error {
@@ -90,10 +94,15 @@ func runReport(cmd *cobra.Command, args []string) error {
 
 	fmt.Printf("Found %d entries. Generating narrative...\n", len(entries))
 
-	var narrative string
-	if cfg.AnthropicAPIKey != "" {
-		enc := enricher.New(cfg.AnthropicAPIKey)
+	provider, model := cfg.ResolveAIProvider(reportProvider, reportModel)
+	enc, encErr := enricher.New(provider, model, cfg.AnthropicAPIKey, cfg.OpenAIAPIKey)
+	if encErr != nil {
+		fmt.Printf("Warning: AI not configured (%v). Generating without AI narrative.\n", encErr)
+		enc = nil
+	}
 
+	var narrative string
+	if enc != nil {
 		// Enrich any entries that haven't been enriched yet
 		for _, e := range entries {
 			if e.Enriched != "" {

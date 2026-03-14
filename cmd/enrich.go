@@ -14,10 +14,12 @@ import (
 )
 
 var (
-	enrichFrom   string
-	enrichTo     string
-	enrichPeriod string
-	enrichAll    bool
+	enrichFrom     string
+	enrichTo       string
+	enrichPeriod   string
+	enrichAll      bool
+	enrichProvider string
+	enrichModel    string
 )
 
 var enrichCmd = &cobra.Command{
@@ -31,6 +33,8 @@ func init() {
 	enrichCmd.Flags().StringVar(&enrichTo, "to", "", "End date (YYYY-MM-DD)")
 	enrichCmd.Flags().StringVar(&enrichPeriod, "period", "", "Period shorthand (e.g. Q1-2025)")
 	enrichCmd.Flags().BoolVar(&enrichAll, "all", false, "Re-enrich already enriched entries")
+	enrichCmd.Flags().StringVar(&enrichProvider, "provider", "", "AI provider (anthropic, openai)")
+	enrichCmd.Flags().StringVar(&enrichModel, "model", "", "AI model override")
 }
 
 func runEnrich(cmd *cobra.Command, args []string) error {
@@ -39,10 +43,6 @@ func runEnrich(cmd *cobra.Command, args []string) error {
 	cfg, err := config.Load()
 	if err != nil {
 		return fmt.Errorf("loading config: %w", err)
-	}
-
-	if cfg.AnthropicAPIKey == "" {
-		return fmt.Errorf("anthropic_api_key not configured — run `brag init`")
 	}
 
 	if cfg.Storage.GithubToken == "" || cfg.Storage.Repo == "" {
@@ -86,7 +86,11 @@ func runEnrich(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("listing entries: %w", err)
 	}
 
-	enc := enricher.New(cfg.AnthropicAPIKey)
+	provider, model := cfg.ResolveAIProvider(enrichProvider, enrichModel)
+	enc, err := enricher.New(provider, model, cfg.AnthropicAPIKey, cfg.OpenAIAPIKey)
+	if err != nil {
+		return err
+	}
 	var count int
 
 	for _, e := range entries {
