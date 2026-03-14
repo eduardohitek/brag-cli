@@ -48,9 +48,15 @@ func runInit(cmd *cobra.Command, args []string) error {
 		cfg.Jira.APIToken = prompt(reader, "Jira API token", cfg.Jira.APIToken)
 	}
 
-	// Anthropic
+	// AI configuration
 	fmt.Println()
+	fmt.Println("--- AI configuration ---")
 	cfg.AnthropicAPIKey = prompt(reader, "Anthropic API key", cfg.AnthropicAPIKey)
+	cfg.AIProvider = promptChoice(reader, "AI provider", []string{config.ProviderAnthropic, config.ProviderOpenAI}, cfg.AIProvider, config.ProviderAnthropic)
+	cfg.AIModel = prompt(reader, "AI model (leave blank for default)", cfg.AIModel)
+	if cfg.AIProvider == config.ProviderOpenAI {
+		cfg.OpenAIAPIKey = prompt(reader, "OpenAI API key", cfg.OpenAIAPIKey)
+	}
 
 	// Sync defaults
 	fmt.Println()
@@ -110,6 +116,26 @@ func prompt(reader *bufio.Reader, label, current string) string {
 		return current
 	}
 	return line
+}
+
+func promptChoice(reader *bufio.Reader, label string, choices []string, current, defaultVal string) string {
+	effective := current
+	if effective == "" {
+		effective = defaultVal
+	}
+	fmt.Printf("%s %v [%s]: ", label, choices, effective)
+	line, _ := reader.ReadString('\n')
+	line = strings.TrimRight(line, "\r\n")
+	if line == "" {
+		return effective
+	}
+	for _, c := range choices {
+		if line == c {
+			return line
+		}
+	}
+	fmt.Printf("Invalid choice %q, keeping %q\n", line, effective)
+	return effective
 }
 
 func maskSecret(s string) string {
