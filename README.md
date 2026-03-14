@@ -46,6 +46,9 @@ A configuração é salva em `~/.brag/config.yaml`.
 
 ```yaml
 anthropic_api_key: "sk-ant-..."
+openai_api_key: "sk-..."          # opcional, se usar OpenAI
+ai_provider: "anthropic"          # anthropic (padrão) ou openai
+ai_model: "claude-sonnet-4-20250514"  # opcional, sobrescreve o modelo padrão
 storage:
   github_token: "ghp_..."
   repo: "usuario/brag-data"
@@ -96,12 +99,23 @@ brag list --no-okr
 brag list --from 2025-01-01 --to 2025-03-31
 ```
 
+### Enriquecer entradas com IA
+
+```sh
+brag enrich                              # enriquece entradas pendentes
+brag enrich --period Q1-2025             # por período
+brag enrich --from 2025-01-01 --to 2025-03-31
+brag enrich --all                        # re-enriquece entradas já enriquecidas
+brag enrich --provider openai --model gpt-4o
+```
+
 ### Gerar relatório
 
 ```sh
 brag report
 brag report --period Q1-2025
 brag report --from 2025-01-01 --to 2025-03-31
+brag report --provider openai --model gpt-4o
 ```
 
 O relatório é salvo em `reports/AAAA-MM-DD-report.md` no repositório GitHub de armazenamento.
@@ -168,8 +182,48 @@ Um cache local também é mantido em `~/.brag/cache/`.
 
 ## Enriquecimento por IA
 
-Utiliza `claude-sonnet-4-20250514` (Anthropic) para:
+O `brag` suporta múltiplos provedores de IA para enriquecer entradas e gerar relatórios:
+
+| Provedor | Padrão | Modelo padrão |
+|---|---|---|
+| **Anthropic** (padrão) | ✓ | `claude-sonnet-4-20250514` |
+| **OpenAI** | — | `gpt-4o` |
+
+**Ordem de resolução do provedor/modelo:**
+1. Flag `--provider` / `--model` na linha de comando
+2. Chaves `ai_provider` / `ai_model` no `~/.brag/config.yaml`
+3. Padrão: Anthropic + `claude-sonnet-4-20250514`
+
+O enriquecimento realiza:
 - Converter notas brutas em declarações de conquista no formato STAR
 - Atribuir tags: `confiabilidade`, `velocidade`, `liderança`, `mentoria`, `entrega`, `qualidade`, `impacto`
 - Pontuar o impacto de 1 a 5
 - Inferir associação com OKRs (apenas com alta confiança, nunca forçado)
+
+## Obtendo tokens de API
+
+### Anthropic API key
+1. Acesse [console.anthropic.com](https://console.anthropic.com)
+2. Vá em **API Keys** e crie uma nova chave
+3. Adicione ao config como `anthropic_api_key`
+
+### OpenAI API key
+1. Acesse [platform.openai.com](https://platform.openai.com)
+2. Vá em **API Keys** e crie uma nova chave
+3. Adicione ao config como `openai_api_key`
+
+### GitHub token (armazenamento)
+1. Acesse **github.com → Settings → Developer settings → Personal access tokens → Fine-grained tokens**
+2. Crie um token com acesso ao repositório de armazenamento
+3. Permissão necessária: **Contents: Read & write**
+4. Adicione ao config como `storage.github_token`
+
+### GitHub token (sincronização)
+1. Mesmo caminho: **Fine-grained tokens**
+2. Permissões necessárias: **Contents: Read** e **Metadata: Read**
+3. Adicione ao config como `github_sync.token`
+
+### Jira API token
+1. Acesse [id.atlassian.com/manage-profile/security/api-tokens](https://id.atlassian.com/manage-profile/security/api-tokens)
+2. Crie um novo token de API
+3. Adicione ao config como `jira.api_token`
