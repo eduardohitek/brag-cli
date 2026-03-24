@@ -17,7 +17,7 @@ Uma ferramenta de linha de comando para engenheiros de software registrarem conq
 ### Homebrew (recomendado)
 
 ```sh
-brew install eduardohitek/tap/brag-cli
+brew install eduardohitek/tap/brag
 ```
 
 ### Download manual (GitHub Releases)
