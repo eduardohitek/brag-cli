@@ -87,6 +87,14 @@ brag sync           # usa default_days do config
 brag sync --days 14
 ```
 
+### Sincronizar cache local com o repositório GitHub
+
+```sh
+brag sync-cache
+```
+
+Lê todos os arquivos de `~/.brag/cache/` e envia para o repositório GitHub as entradas que ainda não estão presentes. Útil quando o armazenamento no GitHub foi configurado após a criação de entradas locais.
+
 ### Listar entradas
 
 ```sh
