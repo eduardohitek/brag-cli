@@ -58,7 +58,7 @@ changelog:
       - Merge branch
 
 homebrew_casks:
-  - name: brag-cli
+  - name: brag
     repository:
       owner: eduardohitek
       name: homebrew-tap
