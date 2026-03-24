@@ -14,15 +14,35 @@ Uma ferramenta de linha de comando para engenheiros de software registrarem conq
 
 ## Instalação
 
+### Homebrew (recomendado)
+
+```sh
+brew install eduardohitek/tap/brag-cli
+```
+
+### Download manual (GitHub Releases)
+
+1. Acesse a [página de releases](https://github.com/eduardohitek/brag-cli/releases/latest)
+2. Baixe o arquivo correspondente ao seu sistema operacional e arquitetura
+3. Extraia o binário e mova para um diretório no seu `$PATH`:
+
+```sh
+# Exemplo macOS (Apple Silicon)
+tar -xzf brag_*_darwin_arm64.tar.gz
+mv brag /usr/local/bin/
+```
+
+### Via Go
+
 ```sh
 go install github.com/eduardohitek/brag@latest
 ```
 
-Ou compilar a partir do código-fonte:
+### Compilar a partir do código-fonte
 
 ```sh
-git clone https://github.com/eduardohitek/brag
-cd brag
+git clone https://github.com/eduardohitek/brag-cli
+cd brag-cli
 go build -o brag .
 ```
 
