@@ -35,4 +35,5 @@ func init() {
 	rootCmd.AddCommand(okrCmd)
 	rootCmd.AddCommand(startrailCmd)
 	rootCmd.AddCommand(enrichCmd)
+	rootCmd.AddCommand(syncCacheCmd)
 }
