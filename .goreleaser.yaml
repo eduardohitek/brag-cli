@@ -57,14 +57,14 @@ changelog:
       - Merge pull request
       - Merge branch
 
-brews:
+homebrew_casks:
   - name: brag-cli
     repository:
       owner: eduardohitek
       name: homebrew-tap
-      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}" # <- aqui
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
     homepage: "https://github.com/eduardohitek/brag-cli"
-    description: "Track engineering accomplishments for performance reviews"
+    description: "Automated bragdoc collector"
     install: |
       bin.install "brag"
     test: |
