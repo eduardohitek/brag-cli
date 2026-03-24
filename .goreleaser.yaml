@@ -62,6 +62,7 @@ brews:
     repository:
       owner: eduardohitek
       name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}" # <- aqui
     homepage: "https://github.com/eduardohitek/brag-cli"
     description: "Track engineering accomplishments for performance reviews"
     install: |
