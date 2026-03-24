@@ -56,3 +56,15 @@ changelog:
       - "^chore:"
       - Merge pull request
       - Merge branch
+
+brews:
+  - name: brag-cli
+    repository:
+      owner: eduardohitek
+      name: homebrew-tap
+    homepage: "https://github.com/eduardohitek/brag-cli"
+    description: "Track engineering accomplishments for performance reviews"
+    install: |
+      bin.install "brag"
+    test: |
+      system "#{bin}/brag --version"
