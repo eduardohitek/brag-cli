@@ -65,7 +65,3 @@ homebrew_casks:
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
     homepage: "https://github.com/eduardohitek/brag-cli"
     description: "Automated bragdoc collector"
-    install: |
-      bin.install "brag"
-    test: |
-      system "#{bin}/brag --version"
