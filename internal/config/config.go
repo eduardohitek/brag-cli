@@ -56,6 +56,15 @@ type JiraConfig struct {
 	APIToken string `yaml:"api_token"`
 }
 
+type LinearConfig struct {
+	APIKey string `yaml:"api_key"`
+	TeamID string `yaml:"team_id,omitempty"`
+}
+
+func (c *LinearConfig) IsConfigured() bool {
+	return c.APIKey != ""
+}
+
 type SyncConfig struct {
 	DefaultDays int `yaml:"default_days"`
 }
@@ -68,6 +77,7 @@ type Config struct {
 	Storage         StorageConfig    `yaml:"storage"`
 	GithubSync      GithubSyncConfig `yaml:"github_sync"`
 	Jira            JiraConfig       `yaml:"jira"`
+	Linear          LinearConfig     `yaml:"linear"`
 	Sync            SyncConfig       `yaml:"sync"`
 	OKRs            []OKR            `yaml:"okrs"`
 	StarTrail       StarTrailConfig  `yaml:"star_trail,omitempty"`

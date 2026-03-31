@@ -10,6 +10,7 @@ import (
 	"github.com/eduardohitek/brag/internal/config"
 	ghsync "github.com/eduardohitek/brag/internal/github"
 	"github.com/eduardohitek/brag/internal/jira"
+	"github.com/eduardohitek/brag/internal/linear"
 	"github.com/eduardohitek/brag/internal/store"
 )
 
@@ -50,7 +51,7 @@ func runSync(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("creating store: %w", err)
 	}
 
-	var githubCount, jiraCount int
+	var githubCount, jiraCount, linearCount int
 
 	// Sync GitHub
 	if cfg.GithubSync.Token != "" && cfg.GithubSync.Username != "" {
@@ -107,9 +108,30 @@ func runSync(cmd *cobra.Command, args []string) error {
 		fmt.Println("Jira sync skipped (not configured).")
 	}
 
+	// Sync Linear
+	if cfg.Linear.IsConfigured() {
+		fmt.Printf("Syncing Linear (last %d days)...\n", days)
+		linearClient := linear.New(cfg.Linear.APIKey, cfg.Linear.TeamID)
+		issues, err := linearClient.FetchRecentCompletedIssues(ctx, days)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Warning: Linear sync failed: %v\n", err)
+		} else {
+			for _, e := range issues {
+				n, err := processAndSaveEntry(ctx, e, s)
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "Warning: failed to save Linear entry: %v\n", err)
+				}
+				linearCount += n
+			}
+		}
+	} else {
+		fmt.Println("Linear sync skipped (not configured).")
+	}
+
 	fmt.Printf("\nSync complete:\n")
 	fmt.Printf("  GitHub: %d new entries\n", githubCount)
 	fmt.Printf("  Jira:   %d new entries\n", jiraCount)
+	fmt.Printf("  Linear: %d new entries\n", linearCount)
 
 	return nil
 }

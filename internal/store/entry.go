@@ -13,7 +13,7 @@ type Entry struct {
 	Raw           string    `json:"raw"`
 	Enriched      string    `json:"enriched"`
 	Tags          []string  `json:"tags"`
-	Source        string    `json:"source"` // manual | github | jira
+	Source        string    `json:"source"` // manual | github | jira | linear
 	SourceURL     string    `json:"source_url,omitempty"`
 	GithubProject string    `json:"github_project,omitempty"`
 	OKR           *OKRRef   `json:"okr,omitempty"`
