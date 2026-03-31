@@ -7,6 +7,7 @@ Uma ferramenta de linha de comando para engenheiros de software registrarem conq
 - **Entradas manuais** via `brag add` com enriquecimento por IA (formato STAR, tags, pontuação de impacto)
 - **Sincronização com GitHub** — PRs mergeados e issues fechadas por você
 - **Sincronização com Jira** — tickets movidos para Done
+- **Sincronização com Linear** — issues concluídas e atribuídas a você
 - **Rastreamento de OKRs** — associe entradas a OKRs; a IA infere com alta confiança
 - **StarTrail (trilha de carreira)** — contexto opcional de trilha de carreira para que o enriquecimento por IA reflita as competências do seu cargo
 - **Relatórios de desempenho** — narrativa sintetizada por IA, agrupada por OKR, exportável em Markdown e PDF
@@ -79,6 +80,9 @@ jira:
   base_url: "https://suaempresa.atlassian.net"
   email: "voce@empresa.com"
   api_token: "..."
+linear:
+  api_key: "lin_api_..."
+  team_id: "uuid-do-time"     # opcional — filtra por um time específico
 sync:
   default_days: 30
 okrs:
@@ -100,12 +104,14 @@ brag add "Corrigi um bug crítico de autenticação que afetava 20% dos usuário
 brag add "Liderança na migração para Kubernetes" --project minha-plataforma --okr OKR-2025-Q1-01
 ```
 
-### Sincronizar GitHub + Jira
+### Sincronizar GitHub, Jira e Linear
 
 ```sh
 brag sync           # usa default_days do config
 brag sync --days 14
 ```
+
+Cada fonte é sincronizada apenas se estiver configurada no `~/.brag/config.yaml`. Entradas já importadas são ignoradas (deduplicação por URL).
 
 ### Sincronizar cache local com o repositório GitHub
 
@@ -255,3 +261,9 @@ O enriquecimento realiza:
 1. Acesse [id.atlassian.com/manage-profile/security/api-tokens](https://id.atlassian.com/manage-profile/security/api-tokens)
 2. Crie um novo token de API
 3. Adicione ao config como `jira.api_token`
+
+### Linear API key
+1. Acesse **linear.app → Settings → API → Personal API keys**
+2. Crie uma nova chave pessoal
+3. Adicione ao config como `linear.api_key`
+4. (Opcional) Para filtrar por um time específico, adicione o UUID do time em `linear.team_id`
