@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>brag — Track every win. Own your career.</title>
+  <meta name="description" content="A CLI tool for software engineers to log accomplishments, sync GitHub PRs, Jira tickets, and Linear issues, enrich with AI (STAR format), and generate performance review reports." />
+  <meta property="og:title" content="brag — Track every win. Own your career." />
+  <meta property="og:description" content="CLI tool to log accomplishments, sync GitHub/Jira/Linear, enrich with AI (STAR), and generate performance reports." />
+  <meta property="og:image" content="https://avatars.githubusercontent.com/u/88193?v=4" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:creator" content="@eduardohitek" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⭐</text></svg>" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ══ HEADER ══════════════════════════════════════════ -->
+  <header class="site-header">
+    <a href="#" class="logo">
+      <span class="prompt">$</span> brag
+    </a>
+    <div class="header-controls">
+      <button id="themeToggle" class="btn-icon" aria-label="Toggle theme">🌙</button>
+      <button id="langToggle" class="btn-icon" aria-label="Toggle language" data-i18n="nav.lang">PT</button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ══ HERO ═════════════════════════════════════════ -->
+    <section class="hero" style="max-width:100%;padding-top:6rem;padding-bottom:5rem;">
+      <div class="section-inner" style="text-align:center;">
+        <span class="hero-badge" data-i18n="hero.badge">v0.8.0 — Open Source CLI</span>
+
+        <h1>
+          <span data-i18n="hero.h1.line1">Track every win.</span><br />
+          <span class="accent" data-i18n="hero.h1.line2">Own your career.</span><span class="cursor"></span>
+        </h1>
+
+        <p class="hero-subtitle" data-i18n="hero.subtitle">
+          A CLI tool for software engineers to log accomplishments, sync GitHub PRs, Jira tickets, and Linear issues, enrich them with AI using the STAR format, and generate structured performance review reports.
+        </p>
+
+        <div class="hero-ctas">
+          <a href="https://github.com/eduardohitek/brag-cli" target="_blank" rel="noopener" class="btn-secondary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+            <span data-i18n="hero.cta.github">View on GitHub</span>
+          </a>
+          <a href="https://github.com/eduardohitek/brag-cli/releases/latest" target="_blank" rel="noopener" class="btn-primary" data-i18n="install.tab.download">Download</a>
+        </div>
+
+        <div class="hero-install">
+          <span class="hero-install-label" style="color:var(--text-muted);font-size:0.85rem;" data-i18n="hero.install.label">Quick install:</span>
+          <div class="install-snippet">
+            <span class="prompt-char">$</span>
+            <span>brew install eduardohitek/tap/brag</span>
+            <button class="copy-btn" data-copy="brew install eduardohitek/tap/brag" aria-label="Copy install command" data-i18n="hero.install.copy">Copy</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ FEATURES ══════════════════════════════════════ -->
+    <section id="features">
+      <div class="section-inner">
+        <h2 class="section-title" data-i18n="features.title">Features</h2>
+        <p class="section-subtitle" data-i18n="features.subtitle">Everything you need to document your impact.</p>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <span class="feature-icon">🤖</span>
+            <h3 class="feature-title" data-i18n="feat1.title">AI Enrichment (STAR)</h3>
+            <p class="feature-desc" data-i18n="feat1.desc">Automatically converts raw entries into structured STAR narratives — Situation, Task, Action, Result — with tags and impact scores (1–5) via Anthropic or OpenAI.</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">🔄</span>
+            <h3 class="feature-title" data-i18n="feat2.title">GitHub / Jira / Linear Sync</h3>
+            <p class="feature-desc" data-i18n="feat2.desc">Pull merged PRs, closed issues, and completed tickets directly from your integrations. Deduplication ensures no entry appears twice.</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">🎯</span>
+            <h3 class="feature-title" data-i18n="feat3.title">OKR Tracking</h3>
+            <p class="feature-desc" data-i18n="feat3.desc">Associate accomplishments with your Objectives & Key Results. AI infers the best OKR match with high confidence so nothing falls through the cracks.</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">🚀</span>
+            <h3 class="feature-title" data-i18n="feat4.title">StarTrail — Career Path</h3>
+            <p class="feature-desc" data-i18n="feat4.desc">Load your career ladder document and set current/target roles so AI enrichment reflects the competencies that matter most for your next promotion.</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">📊</span>
+            <h3 class="feature-title" data-i18n="feat5.title">Performance Reports</h3>
+            <p class="feature-desc" data-i18n="feat5.desc">Generate AI-synthesized performance review narratives grouped by OKR and saved to your private GitHub repo — ready to paste into any review form.</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">📄</span>
+            <h3 class="feature-title" data-i18n="feat6.title">PDF &amp; Markdown Export</h3>
+            <p class="feature-desc" data-i18n="feat6.desc">Export reports as PDF (via headless Chrome) or Markdown to your local filesystem. Full fidelity, no vendor lock-in.</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">🗄️</span>
+            <h3 class="feature-title" data-i18n="feat7.title">Private Storage</h3>
+            <p class="feature-desc" data-i18n="feat7.desc">Entries are saved locally by default (~/.brag/cache/). Connect a private GitHub repository at any time to sync your data to the cloud — no database required.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ DEMO ══════════════════════════════════════════ -->
+    <section id="demo">
+      <div class="section-inner">
+        <h2 class="section-title" data-i18n="demo.title">Try it</h2>
+        <p class="section-subtitle" data-i18n="demo.subtitle">Add an accomplishment in seconds.</p>
+        <div class="demo-terminal">
+          <div class="terminal-bar">
+            <span class="terminal-dot red"></span>
+            <span class="terminal-dot yellow"></span>
+            <span class="terminal-dot green"></span>
+            <span class="terminal-title">Terminal</span>
+          </div>
+          <div class="terminal-body">
+            <pre><span class="t-prompt">$</span> <span class="t-answer">brag add "Refactored the payment service to reduce p99 latency by 40%"</span>
+
+<span class="t-success">✔</span> Entry saved locally <span class="t-muted">(~/.brag/cache/)</span>
+<span class="t-muted">  Run "brag enrich" to enrich with AI (STAR format)</span></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ HOW IT WORKS ══════════════════════════════════ -->
+    <section id="how-it-works">
+      <div class="section-inner">
+        <h2 class="section-title" data-i18n="how.title">How it works</h2>
+        <p class="section-subtitle" data-i18n="how.subtitle">Three commands to capture, enrich, and report your impact.</p>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-number">1</div>
+            <h3 class="step-title" data-i18n="step1.title">Configure</h3>
+            <p class="step-desc" data-i18n="step1.desc">Run the interactive setup wizard to connect your GitHub, Jira, Linear, and AI provider.</p>
+            <code class="step-code">brag init</code>
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <h3 class="step-title" data-i18n="step2.title">Capture</h3>
+            <p class="step-desc" data-i18n="step2.desc">Add entries manually or let brag sync your recent work automatically from your integrations.</p>
+            <code class="step-code">brag sync &amp;&amp; brag enrich</code>
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <h3 class="step-title" data-i18n="step3.title">Report</h3>
+            <p class="step-desc" data-i18n="step3.desc">Generate an AI-enriched performance report grouped by OKR and export it as PDF or Markdown.</p>
+            <code class="step-code">brag report &amp;&amp; brag export</code>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ INSTALLATION ══════════════════════════════════ -->
+    <section id="installation">
+      <div class="section-inner">
+        <h2 class="section-title" data-i18n="install.title">Installation</h2>
+        <p class="section-subtitle" data-i18n="install.subtitle">Choose your preferred method.</p>
+
+        <div class="install-tabs-container">
+          <div class="tabs" role="tablist">
+            <button class="tab-btn active" data-tab="homebrew" role="tab" data-i18n="install.tab.homebrew">Homebrew</button>
+            <button class="tab-btn" data-tab="go" role="tab" data-i18n="install.tab.go">Go</button>
+            <button class="tab-btn" data-tab="download" role="tab" data-i18n="install.tab.download">Download</button>
+            <button class="tab-btn" data-tab="source" role="tab" data-i18n="install.tab.source">Source</button>
+          </div>
+
+          <div class="tab-panel active" data-panel="homebrew" role="tabpanel">
+            <div class="code-block">
+              <button class="code-copy-btn" aria-label="Copy code">Copy</button>
+              <pre><span class="comment"># Add the tap and install</span>
+<span class="cmd">brew install eduardohitek/tap/brag</span></pre>
+            </div>
+          </div>
+
+          <div class="tab-panel" data-panel="go" role="tabpanel">
+            <div class="code-block">
+              <button class="code-copy-btn" aria-label="Copy code">Copy</button>
+              <pre><span class="comment"># Requires Go 1.21+</span>
+<span class="cmd">go install github.com/eduardohitek/brag@latest</span></pre>
+            </div>
+          </div>
+
+          <div class="tab-panel" data-panel="download" role="tabpanel">
+            <div class="code-block">
+              <button class="code-copy-btn" aria-label="Copy code">Copy</button>
+              <pre><span class="comment"># Download binary for linux/darwin/windows (amd64 or arm64)</span>
+<span class="comment"># from https://github.com/eduardohitek/brag-cli/releases/latest</span>
+
+<span class="comment"># Example for macOS arm64:</span>
+<span class="cmd">curl -L https://github.com/eduardohitek/brag-cli/releases/latest/download/brag_Darwin_arm64.tar.gz | tar xz</span>
+<span class="cmd">mv brag /usr/local/bin/</span></pre>
+            </div>
+          </div>
+
+          <div class="tab-panel" data-panel="source" role="tabpanel">
+            <div class="code-block">
+              <button class="code-copy-btn" aria-label="Copy code">Copy</button>
+              <pre><span class="cmd">git clone https://github.com/eduardohitek/brag-cli</span>
+<span class="cmd">cd brag-cli</span>
+<span class="cmd">go build -o brag .</span>
+<span class="cmd">mv brag /usr/local/bin/</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ ABOUT ══════════════════════════════════════════ -->
+    <section id="about">
+      <div class="section-inner">
+        <h2 class="section-title" data-i18n="about.title">About the Author</h2>
+
+        <div class="about-card">
+          <img
+            class="about-avatar"
+            src="https://avatars.githubusercontent.com/u/88193?v=4"
+            alt="Eduardo Hitek"
+            width="120"
+            height="120"
+            loading="lazy"
+          />
+          <div class="about-info">
+            <h3>Eduardo Hitek</h3>
+            <p class="about-role" data-i18n="about.role">Senior Software Engineer</p>
+            <p class="about-bio" data-i18n="about.bio">15+ years of experience in Backend, Fintech, distributed systems, payments, and PIX/BACEN domains. Currently at Stone. Passionate about developer tooling and craftsmanship.</p>
+            <div class="social-links">
+              <a class="social-link" href="https://github.com/eduardohitek" target="_blank" rel="noopener" aria-label="GitHub">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+                GitHub
+              </a>
+              <a class="social-link" href="https://twitter.com/eduardohitek" target="_blank" rel="noopener" aria-label="Twitter / X">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                Twitter / X
+              </a>
+              <a class="social-link" href="https://linkedin.com/in/eduardohitek" target="_blank" rel="noopener" aria-label="LinkedIn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                LinkedIn
+              </a>
+              <a class="social-link" href="http://eduardohitek.dev" target="_blank" rel="noopener" aria-label="Website">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                eduardohitek.dev
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ══ FOOTER ════════════════════════════════════════ -->
+  <footer>
+    <div class="footer-inner">
+      <p>
+        <span data-i18n="footer.built">Built with ❤️ by</span>
+        <a href="https://github.com/eduardohitek" target="_blank" rel="noopener"> Eduardo Hitek</a>
+      </p>
+      <div class="footer-links">
+        <a href="https://github.com/eduardohitek/brag-cli" target="_blank" rel="noopener" data-i18n="footer.repo">GitHub Repository</a>
+        <a href="https://github.com/eduardohitek/brag-cli/blob/main/LICENSE" target="_blank" rel="noopener" data-i18n="footer.license">MIT License</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
