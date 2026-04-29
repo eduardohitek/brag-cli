@@ -33,7 +33,7 @@ func runSyncCache(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("GitHub storage not configured — run `brag init`")
 	}
 
-	s, err := store.New(cfg.Storage.GithubToken, cfg.Storage.Repo)
+	s, err := store.New(cfg.Storage.GithubToken, cfg.Storage.Repo, config.CacheDir())
 	if err != nil {
 		return fmt.Errorf("creating store: %w", err)
 	}

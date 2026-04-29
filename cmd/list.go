@@ -23,6 +23,7 @@ var (
 	listOKR     string
 	listProject string
 	listNoOKR   bool
+	listRefresh bool
 )
 
 var listCmd = &cobra.Command{
@@ -41,6 +42,7 @@ func init() {
 	listCmd.Flags().StringVar(&listOKR, "okr", "", "Filter by OKR ID")
 	listCmd.Flags().StringVar(&listProject, "project", "", "Filter by GitHub project name")
 	listCmd.Flags().BoolVar(&listNoOKR, "no-okr", false, "Show only entries without an OKR")
+	listCmd.Flags().BoolVar(&listRefresh, "refresh", false, "Force refresh from GitHub, ignoring local cache")
 }
 
 func runList(cmd *cobra.Command, args []string) error {
@@ -55,17 +57,18 @@ func runList(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("storage not configured — run `brag init`")
 	}
 
-	s, err := store.New(cfg.Storage.GithubToken, cfg.Storage.Repo)
+	s, err := store.New(cfg.Storage.GithubToken, cfg.Storage.Repo, config.CacheDir())
 	if err != nil {
 		return fmt.Errorf("creating store: %w", err)
 	}
 
 	opts := store.ListOptions{
-		Tag:     listTag,
-		Source:  listSource,
-		OKR:     listOKR,
-		Project: listProject,
-		NoOKR:   listNoOKR,
+		Tag:          listTag,
+		Source:       listSource,
+		OKR:          listOKR,
+		Project:      listProject,
+		NoOKR:        listNoOKR,
+		ForceRefresh: listRefresh,
 	}
 
 	if listPeriod != "" {

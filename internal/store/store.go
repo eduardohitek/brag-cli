@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
@@ -13,12 +14,13 @@ import (
 )
 
 type Store struct {
-	client *github.Client
-	owner  string
-	repo   string
+	client   *github.Client
+	owner    string
+	repo     string
+	cacheDir string
 }
 
-func New(token, ownerRepo string) (*Store, error) {
+func New(token, ownerRepo, cacheDir string) (*Store, error) {
 	parts := strings.SplitN(ownerRepo, "/", 2)
 	if len(parts) != 2 {
 		return nil, fmt.Errorf("invalid repo format %q, expected owner/repo", ownerRepo)
@@ -26,9 +28,10 @@ func New(token, ownerRepo string) (*Store, error) {
 	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
 	tc := oauth2.NewClient(context.Background(), ts)
 	return &Store{
-		client: github.NewClient(tc),
-		owner:  parts[0],
-		repo:   parts[1],
+		client:   github.NewClient(tc),
+		owner:    parts[0],
+		repo:     parts[1],
+		cacheDir: cacheDir,
 	}, nil
 }
 
@@ -49,9 +52,12 @@ func (s *Store) SaveEntry(ctx context.Context, e *Entry) error {
 		Message: &msg,
 		Content: []byte(encoded),
 	}
-	_, _, err = s.client.Repositories.CreateFile(ctx, s.owner, s.repo, path, opts)
+	resp, _, err := s.client.Repositories.CreateFile(ctx, s.owner, s.repo, path, opts)
 	if err != nil {
 		return fmt.Errorf("creating file in repo: %w", err)
+	}
+	if s.cacheDir != "" && resp.Content != nil {
+		_ = s.writeEntryToCache(e, path, resp.Content.GetSHA())
 	}
 	return nil
 }
@@ -72,27 +78,37 @@ func (s *Store) UpdateEntry(ctx context.Context, e *Entry) error {
 		Content: []byte(encoded),
 		SHA:     &e.FileSHA,
 	}
-	_, _, err = s.client.Repositories.UpdateFile(ctx, s.owner, s.repo, path, opts)
+	resp, _, err := s.client.Repositories.UpdateFile(ctx, s.owner, s.repo, path, opts)
 	if err != nil {
 		return fmt.Errorf("updating file in repo: %w", err)
+	}
+	if s.cacheDir != "" && resp.Content != nil {
+		_ = s.writeEntryToCache(e, path, resp.Content.GetSHA())
 	}
 	return nil
 }
 
 type ListOptions struct {
-	Since   *time.Time
-	From    *time.Time
-	To      *time.Time
-	Tag     string
-	Source  string
-	OKR     string
-	Project string
-	NoOKR   bool
+	Since        *time.Time
+	From         *time.Time
+	To           *time.Time
+	Tag          string
+	Source       string
+	OKR          string
+	Project      string
+	NoOKR        bool
+	ForceRefresh bool
 }
 
 func (s *Store) ListEntries(ctx context.Context, opts ListOptions) ([]*Entry, error) {
+	meta := s.loadCacheMeta()
+
 	_, dirContents, _, err := s.client.Repositories.GetContents(ctx, s.owner, s.repo, "entries", nil)
 	if err != nil {
+		if s.cacheDir != "" && len(meta.Entries) > 0 {
+			fmt.Fprintln(os.Stderr, "[aviso: sem acesso ao GitHub — exibindo cache local]")
+			return s.listEntriesFromCache(meta, opts)
+		}
 		return nil, fmt.Errorf("listing entries directory: %w", err)
 	}
 
@@ -101,53 +117,45 @@ func (s *Store) ListEntries(ctx context.Context, opts ListOptions) ([]*Entry, er
 		if fc.GetType() != "file" || !strings.HasSuffix(fc.GetName(), ".json") {
 			continue
 		}
-		fileContent, _, _, err := s.client.Repositories.GetContents(ctx, s.owner, s.repo, fc.GetPath(), nil)
-		if err != nil {
-			continue
+
+		var e *Entry
+		cached, inCache := meta.Entries[fc.GetPath()]
+		if !opts.ForceRefresh && inCache && cached.SHA == fc.GetSHA() && s.cacheDir != "" {
+			e, err = s.readEntryFromCache(fc.GetName(), cached.SHA)
+			if err != nil {
+				e = nil // fallthrough to GitHub fetch on read error
+			}
 		}
-		rawContent, _ := fileContent.GetContent()
-		decoded, err := base64.StdEncoding.DecodeString(rawContent)
-		if err != nil {
-			// GitHub sometimes returns content with newlines; strip them
-			cleaned := strings.ReplaceAll(rawContent, "\n", "")
-			decoded, err = base64.StdEncoding.DecodeString(cleaned)
+
+		if e == nil {
+			fileContent, _, _, err := s.client.Repositories.GetContents(ctx, s.owner, s.repo, fc.GetPath(), nil)
 			if err != nil {
 				continue
 			}
-		}
-		var e Entry
-		if err := json.Unmarshal(decoded, &e); err != nil {
-			continue
-		}
-		e.FileSHA = fileContent.GetSHA()
-
-		// Apply filters
-		if opts.Since != nil && e.Date.Before(*opts.Since) {
-			continue
-		}
-		if opts.From != nil && e.Date.Before(*opts.From) {
-			continue
-		}
-		if opts.To != nil && e.Date.After(*opts.To) {
-			continue
-		}
-		if opts.Source != "" && e.Source != opts.Source {
-			continue
-		}
-		if opts.OKR != "" && (e.OKR == nil || e.OKR.ID != opts.OKR) {
-			continue
-		}
-		if opts.NoOKR && e.OKR != nil {
-			continue
-		}
-		if opts.Project != "" && e.GithubProject != opts.Project {
-			continue
-		}
-		if opts.Tag != "" && !containsTag(e.Tags, opts.Tag) {
-			continue
+			rawContent, _ := fileContent.GetContent()
+			decoded, err := base64.StdEncoding.DecodeString(rawContent)
+			if err != nil {
+				cleaned := strings.ReplaceAll(rawContent, "\n", "")
+				decoded, err = base64.StdEncoding.DecodeString(cleaned)
+				if err != nil {
+					continue
+				}
+			}
+			var entry Entry
+			if err := json.Unmarshal(decoded, &entry); err != nil {
+				continue
+			}
+			entry.FileSHA = fileContent.GetSHA()
+			e = &entry
+			if s.cacheDir != "" {
+				_ = s.writeEntryToCache(e, fc.GetPath(), fileContent.GetSHA())
+			}
 		}
 
-		entries = append(entries, &e)
+		if !applyFilters(e, opts) {
+			continue
+		}
+		entries = append(entries, e)
 	}
 	return entries, nil
 }
