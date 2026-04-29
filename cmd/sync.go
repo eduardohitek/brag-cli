@@ -46,7 +46,7 @@ func runSync(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("storage GitHub token and repo must be configured (run `brag init`)")
 	}
 
-	s, err := store.New(cfg.Storage.GithubToken, cfg.Storage.Repo)
+	s, err := store.New(cfg.Storage.GithubToken, cfg.Storage.Repo, config.CacheDir())
 	if err != nil {
 		return fmt.Errorf("creating store: %w", err)
 	}

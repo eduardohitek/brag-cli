@@ -65,7 +65,7 @@ func runAdd(cmd *cobra.Command, args []string) error {
 
 	// Push to GitHub repo
 	if cfg.Storage.GithubToken != "" && cfg.Storage.Repo != "" {
-		s, err := store.New(cfg.Storage.GithubToken, cfg.Storage.Repo)
+		s, err := store.New(cfg.Storage.GithubToken, cfg.Storage.Repo, config.CacheDir())
 		if err != nil {
 			return fmt.Errorf("creating store: %w", err)
 		}

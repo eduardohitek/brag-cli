@@ -131,7 +131,13 @@ brag list --source github
 brag list --okr OKR-2025-Q1-01
 brag list --no-okr
 brag list --from 2025-01-01 --to 2025-03-31
+brag list --refresh                      # força busca completa no GitHub
 ```
+
+O `brag list` mantém um cache local em `~/.brag/cache/` para evitar múltiplas chamadas ao GitHub a cada execução. Na primeira listagem, os dados são baixados do GitHub e armazenados localmente. Nas execuções seguintes, apenas 1 chamada de rede é feita para verificar se houve mudanças (via SHA dos arquivos); os arquivos inalterados são lidos do disco.
+
+- **`--refresh`**: ignora o cache e força o download completo do GitHub.
+- **Offline**: se o GitHub estiver inacessível e o cache existir, as entradas são exibidas com um aviso.
 
 ### Enriquecer entradas com IA
 
