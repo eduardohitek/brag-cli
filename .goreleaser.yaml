@@ -65,9 +65,10 @@ homebrew_casks:
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
     homepage: "https://github.com/eduardohitek/brag-cli"
     description: "Automated bragdoc collector"
-    hooks:
-      post:
-        install: |
-          if OS.mac?
-            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/brag"]
-          end
+    # `hooks.post.install` gera `postflight do`, depreciado no Homebrew em favor de `postflight_steps`.
+    custom_block: |
+      postflight_steps do
+        on_macos do
+          run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "brag"], base: :staged_path
+        end
+      end
